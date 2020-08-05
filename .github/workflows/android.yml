@@ -29,7 +29,7 @@ jobs:
       with:
         java-version: 1.8
     - name: Build with Gradle
-      run: ./gradlew build
+      run: ~/gradlew build
     # 缓存
     - name: Cache Gradle packages
       uses: actions/cache@v2
@@ -44,4 +44,4 @@ jobs:
 
     # 测试程序
     - name: Test with gradle
-      run: ./gradlew test
+      run: ~/gradlew test
