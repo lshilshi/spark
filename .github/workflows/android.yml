@@ -9,7 +9,7 @@ on:
 jobs:
   build:
 
-    name: Kotlin Tests
+    name: Kotlin CI
     runs-on: ubuntu-latest
     env:
       TZ: Asia/Shanghai
@@ -28,8 +28,13 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
+
+    # 给权限
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+      
     - name: Build with Gradle
-      run: ~/gradlew build
+      run: ./gradlew build
     # 缓存
     - name: Cache Gradle packages
       uses: actions/cache@v2
@@ -38,10 +43,6 @@ jobs:
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
         restore-keys: ${{ runner.os }}-gradle
 
-    # 给权限
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-
     # 测试程序
     - name: Test with gradle
-      run: ~/gradlew test
+      run: ./gradlew test
