@@ -1,14 +1,15 @@
 # workflow name
-name: Test Workflow
+name: Doc Workflow
 
 on:
-  push:
+  release:
+    types: [published]
     branches:
       - master
 
 jobs:
   test:
-    name: Kotlin Tests
+    name: Kotlin Documentation Generation
     runs-on: ubuntu-latest
     env:
       TZ: Asia/Shanghai
@@ -41,6 +42,22 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      # 测试程序
-      - name: Test with gradle
-        run: ./gradlew test
+      # 缓存
+      # 暂时还未找到hash值的解决方案，找到了请pr
+      # - name: Cache Dokka
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: ~/.cache/dokka
+      #     key: ${{ runner.os }}-dokka-${{ hashFiles('**/*') }}
+      #     restore-keys: ${{ runner.os }}-dokka
+
+      # 生成文档
+      - name: Generate documentation
+        run: ./gradlew dokka
+
+      # 部署到ghpage
+      - name: Deploy to gh-pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+          publish_dir: ./build/dokka
