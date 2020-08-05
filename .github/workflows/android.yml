@@ -9,16 +9,39 @@ on:
 jobs:
   build:
 
+    name: Kotlin Tests
     runs-on: ubuntu-latest
+    env:
+      TZ: Asia/Shanghai
 
     steps:
-    - uses: actions/checkout@v2
+    # check it to your workflow can access it
+    # from: https://github.com/actions/checkout
+    - name: Checkout Repository master branch
+      uses: actions/checkout@master
+
+    # 验证wrapper
+    - name: validate wrapper
+      uses: gradle/wrapper-validation-action@v1
+
     - name: set up JDK 1.8
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
     - name: Build with Gradle
       run: ./gradlew build
+    # 缓存
+    - name: Cache Gradle packages
+      uses: actions/cache@v2
+      with:
+        path: ~/.gradle/caches
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+        restore-keys: ${{ runner.os }}-gradle
+
     # 给权限
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
+
+    # 测试程序
+    - name: Test with gradle
+      run: ./gradlew test
